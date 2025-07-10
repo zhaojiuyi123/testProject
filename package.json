@@ -1,0 +1,35 @@
+{
+  "name": "vite-project",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@antv/g2plot": "^2.4.33",
+    "@antv/x6": "^2.18.1",
+    "@antv/x6-plugin-minimap": "^2.0.7",
+    "@antv/x6-plugin-scroller": "^2.0.10",
+    "@antv/x6-vue-shape": "^2.1.2",
+    "@tailwindcss/vite": "^4.1.11",
+    "@visactor/vchart": "^2.0.0",
+    "@visactor/vgrammar": "^0.16.10",
+    "@visactor/vtable": "^1.19.2",
+    "grid-layout-plus": "^1.1.0",
+    "naive-ui": "^2.41.0",
+    "tailwindcss": "^4.1.11",
+    "vue": "^3.5.13",
+    "vue-draggable": "^2.0.6",
+    "vuedraggable": "^4.1.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.3",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5",
+    "vue-tsc": "^2.2.8"
+  }
+}
