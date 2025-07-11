@@ -13,12 +13,20 @@
         标记：
         <div class="flex" v-for="mark in markList">
           <span>{{ mark.label }}</span>
-          <NSelect class="max-w-[50%]" :options="markOptions" v-model:value="mark.markType" />
+          <NSelect
+            class="max-w-[50%]"
+            :options="markOptions"
+            v-model:value="mark.markType"
+          />
           <div v-for="encode in mark.encodes">
             {{ encodeLabelMap[encode.encode] }}
-            <NSelect :options="options" v-model:value="encode.field" class="min-w-[100px]" clearable/>
+            <NSelect
+              :options="options"
+              v-model:value="encode.field"
+              class="min-w-[100px]"
+              clearable
+            />
           </div>
-
         </div>
       </div>
     </div>
@@ -29,9 +37,23 @@
 <script setup lang="ts">
 import { NButton, NSelect } from "naive-ui";
 import { fieldList, getChartConfig } from "./data";
-import { computed, ref, unref, useTemplateRef, watch, type ShallowRef } from "vue";
+import {
+  computed,
+  ref,
+  unref,
+  useTemplateRef,
+  watch,
+  type ShallowRef,
+} from "vue";
 import { useRender } from "./render";
-import type { ChartConfig, ChartParam, Encode, EncodeType, Mark, MarkType } from "./interface";
+import type {
+  ChartConfig,
+  ChartParam,
+  Encode,
+  EncodeType,
+  Mark,
+  MarkType,
+} from "./interface";
 
 const options = computed(() =>
   fieldList.map((field) => ({
@@ -45,13 +67,13 @@ const columns = ref<string[]>([]);
 const vChartRef = useTemplateRef<HTMLElement>("vChart");
 const { render } = useRender(vChartRef as ShallowRef<HTMLElement>);
 
-const markOptions: { label: string, value: string }[] = [
+const markOptions: { label: string; value: string }[] = [
   {
     label: "自动",
     value: "auto",
   },
   {
-    label: "条形",
+    label: "矩形",
     value: "bar",
   },
   {
@@ -59,8 +81,12 @@ const markOptions: { label: string, value: string }[] = [
     value: "line",
   },
   {
+    label: "区域",
+    value: "area",
+  },
+  {
     label: "圆",
-    value: "circle",
+    value: "scatter",
   },
   {
     label: "文本",
@@ -69,75 +95,86 @@ const markOptions: { label: string, value: string }[] = [
   {
     label: "饼图",
     value: "pie",
-  }
-]
+  },
+];
 
 const encodeLabelMap: {
   [key: string]: string;
 } = {
-  'color': '颜色',
-  'size': '大小',
-  'shape': '形状',
-  'detail': '详情',
-  'tooltip': '提示',
-}
-const markList = ref<{ label: string, value: string, type: string, markType: MarkType, encodes: Encode[] }[]>([]);
+  color: "颜色",
+  size: "大小",
+  shape: "形状",
+  detail: "详情",
+  tooltip: "提示",
+};
+const markList = ref<
+  {
+    label: string;
+    value: string;
+    type: string;
+    markType: MarkType;
+    encodes: Encode[];
+  }[]
+>([]);
 
-
-const meaFields = computed(() => fieldList
-  .filter(
+const meaFields = computed(() =>
+  fieldList.filter(
     (field) =>
       field.type === "number" &&
       [...unref(rows), ...unref(columns)].includes(field.name)
-  ))
+  )
+);
 
-watch(() => meaFields.value.length, () => {
-  markList.value = meaFields.value.map((field) => ({
-    label: field.name,
-    value: field.name,
-    type: field.type,
-    markType: 'auto',
-    encodes: [
-      {
-        encode: 'color',
-        field: "",
-        type: field.type,
-      }
-    ]
-  }))
-})
+watch(
+  () => meaFields.value.length,
+  () => {
+    markList.value = meaFields.value.map((field) => ({
+      label: field.name,
+      value: field.name,
+      type: field.type,
+      markType: "auto",
+      encodes: [
+        {
+          encode: "color",
+          field: "",
+          type: field.type,
+        },
+      ],
+    }));
+  }
+);
 
 const renderChart = () => {
-  const params = getParams()
+  const params = getParams();
   const result: ChartConfig = getChartConfig(params);
   console.log(result);
 
   render(result);
-}
+};
 
 const getParams = (): ChartParam => {
   return {
-    rows: unref(rows).map(field => {
+    rows: unref(rows).map((field) => {
       return {
         field,
-        type: fieldList.find(f => f.name === field)?.type || 'string'
-      }
+        type: fieldList.find((f) => f.name === field)?.type || "string",
+      };
     }),
-    columns: unref(columns).map(field => {
+    columns: unref(columns).map((field) => {
       return {
         field,
-        type: fieldList.find(f => f.name === field)?.type || 'string'
-      }
+        type: fieldList.find((f) => f.name === field)?.type || "string",
+      };
     }),
-    marks: markList.value.map(mark => {
+    marks: markList.value.map((mark) => {
       const markConfig: Mark = {
         field: mark.value,
         type: mark.type,
         markType: mark.markType,
-        encodes: mark.encodes
-      }
-      return markConfig
-    })
-  }
-}
+        encodes: mark.encodes,
+      };
+      return markConfig;
+    }),
+  };
+};
 </script>

@@ -11,6 +11,7 @@ import type { ChartConfig } from "./interface";
 
 register.chartModule("vchart", VChart);
 function getRenderer(node: HTMLElement, config: ChartConfig) {
+    node.innerHTML = ""
   if (config.renderType === "facetedPlot") {
     return new PivotChart(node, config as PivotChartConstructorOptions);
   } else if (config.type === "table") {
