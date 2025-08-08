@@ -17,13 +17,16 @@
     "@tailwindcss/vite": "^4.1.11",
     "@visactor/vchart": "^2.0.0",
     "@visactor/vgrammar": "^0.16.10",
-    "@visactor/vtable": "^1.19.2",
+    "@visactor/vtable": "^1.19.5",
+    "@visactor/vtable-editors": "^1.19.5",
     "grid-layout-plus": "^1.1.0",
     "naive-ui": "^2.41.0",
     "tailwindcss": "^4.1.11",
     "vue": "^3.5.13",
     "vue-draggable": "^2.0.6",
-    "vuedraggable": "^4.1.0"
+    "vuedraggable": "^4.1.0",
+    "vxe-table": "4.15.4",
+    "xe-utils": "^3.7.8"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",

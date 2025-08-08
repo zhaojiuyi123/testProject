@@ -13,7 +13,8 @@ register.chartModule("vchart", VChart);
 function getRenderer(node: HTMLElement, config: ChartConfig) {
     node.innerHTML = ""
   if (config.renderType === "facetedPlot") {
-    return new PivotChart(node, config as PivotChartConstructorOptions);
+    const pivotChart = new PivotChart(node, config as PivotChartConstructorOptions);
+    return pivotChart;
   } else if (config.type === "table") {
     return new ListTable(node, config as ListTableConstructorOptions);
   } else if (config.type === "indicatorCard") {
