@@ -4,8 +4,8 @@
       <NRadioButton value="vxe-table" >VxeTable</NRadioButton>
       <NRadioButton value="v-table" >VTable</NRadioButton>
     </NRadioGroup>
-    <VxeTable v-if="tableType === 'v-table'" />
-    <VTable v-if="tableType === 'vxe-table'" />
+    <VxeTable v-if="tableType === 'vxe-table'" />
+    <VTable v-if="tableType === 'v-table'" />
   </div>
 </template>
 <script setup lang="ts">

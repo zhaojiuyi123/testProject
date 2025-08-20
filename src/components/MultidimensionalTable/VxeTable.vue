@@ -1,6 +1,19 @@
 <template>
-  <div class="h-full">
+  <div class="h-full pb-20">
+    <NButton @click="addRow">添加行</NButton>
+    <NButton @click="addColumn">添加列</NButton>
+    <NButton type="error" @click="removeRows">删除选中数据</NButton>
     <VxeGrid ref="gridRef" v-bind="gridOptions">
+      <template #attrHeader="{ column }">
+        <span>{{ column.title }}</span>
+        <NButton
+          text
+          type="error"
+          status="error"
+          @click="removeColumn(column.field)"
+          >删除</NButton
+        >
+      </template>
       <template #nameDefault="{ row }">
         <span class="flex items-center">
           <img
@@ -22,7 +35,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, nextTick } from "vue";
+import { ref, reactive, nextTick, h } from "vue";
 import {
   VxeGridInstance,
   VxeGridProps,
@@ -31,6 +44,7 @@ import {
 } from "vxe-table";
 import XEUtils from "xe-utils";
 import "vxe-table/lib/style.css";
+import { NButton, NCheckbox, NRadioButton, NRadioGroup } from "naive-ui";
 
 interface RowVO {
   id: number;
@@ -59,9 +73,7 @@ interface RowVO {
   };
   flag: boolean;
 }
-
 const gridRef = ref<VxeGridInstance<RowVO>>();
-
 const levelNumCellRender = reactive<VxeColumnPropTypes.CellRender>({
   name: "VxeRate",
   props: {
@@ -134,6 +146,13 @@ const gridOptions = reactive<VxeGridProps<RowVO> & { data: RowVO[] }>({
     drag: true,
     resizable: true,
   },
+  filterConfig: {
+    isEvery: true,
+  },
+  editConfig: {
+    trigger: "dblclick",
+    mode: "cell",
+  },
   columnDragConfig: {
     trigger: "cell",
     showIcon: false,
@@ -148,6 +167,8 @@ const gridOptions = reactive<VxeGridProps<RowVO> & { data: RowVO[] }>({
   rowConfig: {
     isHover: true,
     drag: true,
+    resizable: true,
+    isCurrent: true,
   },
   rowDragConfig: {
     isCrossDrag: true,
@@ -186,8 +207,31 @@ const gridOptions = reactive<VxeGridProps<RowVO> & { data: RowVO[] }>({
     gt: 0,
     enabled: true,
   },
+  menuConfig: {
+    body: {
+      options: [
+        [
+          {
+            code: "copy",
+            name: "复制内容（Ctrl+C）",
+            prefixConfig: { icon: "vxe-icon-copy" },
+            visible: true,
+            disabled: false,
+          },
+          { code: "clear", name: "清除内容", visible: true, disabled: false },
+          { code: "reload", name: "刷新表格", visible: true, disabled: false },
+        ],
+      ],
+    },
+  },
   columns: [
-    { field: "checkbox", type: "checkbox", fixed: "left", width: 70 },
+    {
+      field: "checkbox",
+      type: "checkbox",
+      fixed: "left",
+      width: 70,
+      rowResize: true,
+    },
     {
       field: "name",
       title: "名字",
@@ -195,20 +239,55 @@ const gridOptions = reactive<VxeGridProps<RowVO> & { data: RowVO[] }>({
       minWidth: 280,
       treeNode: true,
       dragSort: true,
-      slots: { default: "nameDefault" },
+      slots: { default: "nameDefault", header: "attrHeader" },
+      sortable: true,
+      filters: [
+        { label: "老王", value: "老王" },
+        { label: "小王", value: "小王" },
+        { label: "张三", value: "张三" },
+        { label: "老张", value: "老张" },
+      ],
     },
     {
       title: "基本信息",
       field: "info",
+      slots: {
+        header: "attrHeader",
+      },
       children: [
-        { field: "city", title: "所在地", width: 140, formatter: formatCity },
-        { field: "age", title: "年龄", width: 120 },
-        { field: "sex", title: "性别", width: 120, formatter: formatSex },
+        {
+          field: "city",
+          title: "所在地",
+          width: 140,
+          formatter: formatCity,
+          sortable: true,
+        },
+        {
+          field: "age",
+          title: "年龄",
+          width: 120,
+          sortable: true,
+          editRender: { name: "input" },
+        },
+        {
+          field: "sex",
+          title: "性别",
+          width: 120,
+          formatter: formatSex,
+          sortable: true,
+          filters: [
+            { label: "男", value: "1" },
+            { label: "女", value: "0" },
+          ],
+          editRender: { name: "input" },
+        },
         {
           field: "email",
           title: "邮箱",
           width: 220,
           slots: { default: "emailDefault" },
+          sortable: true,
+          editRender: { name: "input" },
         },
       ],
     },
@@ -217,16 +296,27 @@ const gridOptions = reactive<VxeGridProps<RowVO> & { data: RowVO[] }>({
       title: "是否启用",
       width: 120,
       cellRender: flag1CellRender,
+      sortable: true,
+      slots: {
+        header: "attrHeader",
+      },
     },
     {
       field: "levelNum",
       title: "评分",
       width: 160,
       cellRender: levelNumCellRender,
+      sortable: true,
+      slots: {
+        header: "attrHeader",
+      },
     },
     {
       title: "年度账单",
       field: "annualStatement",
+      slots: {
+        header: "attrHeader",
+      },
       children: [
         {
           field: "annualStatement.m1",
@@ -531,55 +621,52 @@ const loadMockData = (rSize: number) => {
         $grid.setAllTreeExpand(true);
       }
     });
+    console.log(gridOptions.data);
+
     gridOptions.loading = false;
-    updateFooterCount();
   }, 150);
 };
 
-const updateFooterCount = () => {
-  let countM1 = 0;
-  let countM2 = 0;
-  let countM3 = 0;
-  let countM4 = 0;
-  let countM5 = 0;
-  let countM6 = 0;
-  let countM7 = 0;
-  let countM8 = 0;
-  let countM9 = 0;
-  let countM10 = 0;
-  let countM11 = 0;
-  let countM12 = 0;
-  let countLN = 0;
-  gridOptions.data.forEach((row) => {
-    countM1 += XEUtils.toNumber(row.annualStatement.m1);
-    countM2 += XEUtils.toNumber(row.annualStatement.m2);
-    countM3 += XEUtils.toNumber(row.annualStatement.m3);
-    countM4 += XEUtils.toNumber(row.annualStatement.m4);
-    countM5 += XEUtils.toNumber(row.annualStatement.m5);
-    countM6 += XEUtils.toNumber(row.annualStatement.m6);
-    countM7 += XEUtils.toNumber(row.annualStatement.m7);
-    countM8 += XEUtils.toNumber(row.annualStatement.m8);
-    countM9 += XEUtils.toNumber(row.annualStatement.m9);
-    countM10 += XEUtils.toNumber(row.annualStatement.m10);
-    countM11 += XEUtils.toNumber(row.annualStatement.m11);
-    countM12 += XEUtils.toNumber(row.annualStatement.m12);
-    countLN += XEUtils.toNumber(row.levelNum);
-  });
-  countRow.name = gridOptions.data.length;
-  countRow.annualStatement.m1 = countM1;
-  countRow.annualStatement.m2 = countM2;
-  countRow.annualStatement.m3 = countM3;
-  countRow.annualStatement.m4 = countM4;
-  countRow.annualStatement.m5 = countM5;
-  countRow.annualStatement.m6 = countM6;
-  countRow.annualStatement.m7 = countM7;
-  countRow.annualStatement.m8 = countM8;
-  countRow.annualStatement.m9 = countM9;
-  countRow.annualStatement.m10 = countM10;
-  countRow.annualStatement.m11 = countM11;
-  countRow.annualStatement.m12 = countM12;
+const addRow = async () => {
+  const $grid = gridRef.value;
+  if ($grid) {
+    const index = Math.floor(Math.random() * cacheList.length);
+    const record = cacheList.slice(index - 1, index)[0];
+
+    Reflect.set(record, {
+      id: Math.random().toString(36).slice(-8),
+      parentId: null,
+      children: [],
+    });
+
+    const { row: newRow } = await $grid.insertAt(record, null);
+    await $grid.setEditRow(newRow);
+  }
 };
 
+let keyFlag = 1;
+const addColumn = () => {
+  gridOptions.columns.push({
+    field: `attr_${keyFlag}`,
+    title: `列_${keyFlag}`,
+    width: 140,
+    slots: {
+      header: "attrHeader",
+    },
+  });
+  keyFlag++;
+};
+const removeRows = async () => {
+  const $grid = gridRef.value;
+  if ($grid) {
+    await $grid.removeCheckboxRow();
+  }
+};
+const removeColumn = (field: string) => {
+  gridOptions.columns = gridOptions.columns.filter(
+    (item) => item.field !== field
+  );
+};
 nextTick(() => {
   loadMockData(300);
 });

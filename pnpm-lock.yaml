@@ -56,6 +56,9 @@ importers:
       vuedraggable:
         specifier: ^4.1.0
         version: 4.1.0(vue@3.5.17(typescript@5.8.3))
+      vxe-pc-ui:
+        specifier: ^4.8.11
+        version: 4.8.11(vue@3.5.17(typescript@5.8.3))
       vxe-table:
         specifier: 4.15.4
         version: 4.15.4(vue@3.5.17(typescript@5.8.3))
@@ -2009,8 +2012,8 @@ packages:
     peerDependencies:
       vue: ^3.0.11
 
-  vxe-pc-ui@4.8.10:
-    resolution: {integrity: sha512-ASeKeUOrnSkkVxJ872FeI8aZzEiaojhN8KwAJJiZnQkgYoraEr+IWa/+J1fyw+utv7cXVDU3y+pIsd/mNvZwwQ==}
+  vxe-pc-ui@4.8.11:
+    resolution: {integrity: sha512-QFgPrgTcRxmw87yAHC1Lr9/jyGBmXIQMjMCiZA++qIVv60Nj5PECcN6wCRHkj+8JCl1d1mhECRC7q2ckLw3bXA==}
 
   vxe-table@4.15.4:
     resolution: {integrity: sha512-WV5/l0s4pES54vlTWMTjBoDu/jHVIQV+pJpSR/ywyne23AmPshzdAudQN3+GOlvTcGjK781At0ZVyP8oSPPpeg==}
@@ -4228,7 +4231,7 @@ snapshots:
       vooks: 0.2.12(vue@3.5.17(typescript@5.8.3))
       vue: 3.5.17(typescript@5.8.3)
 
-  vxe-pc-ui@4.8.10(vue@3.5.17(typescript@5.8.3)):
+  vxe-pc-ui@4.8.11(vue@3.5.17(typescript@5.8.3)):
     dependencies:
       '@vxe-ui/core': 4.2.9(vue@3.5.17(typescript@5.8.3))
     transitivePeerDependencies:
@@ -4236,7 +4239,7 @@ snapshots:
 
   vxe-table@4.15.4(vue@3.5.17(typescript@5.8.3)):
     dependencies:
-      vxe-pc-ui: 4.8.10(vue@3.5.17(typescript@5.8.3))
+      vxe-pc-ui: 4.8.11(vue@3.5.17(typescript@5.8.3))
     transitivePeerDependencies:
       - vue
 
